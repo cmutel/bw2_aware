@@ -1,0 +1,4 @@
+include README.rst
+include *.txt
+include bw2_aware/*.py
+include bw2_aware/data/*.*
