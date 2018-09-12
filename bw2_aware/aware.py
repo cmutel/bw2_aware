@@ -1,5 +1,6 @@
 from .base import LCIA, data_dir, fiona, geocollections
 import os
+from numbers import Number
 
 
 SURFACE_WATER = [
@@ -29,6 +30,7 @@ class AWARE(LCIA):
 
     It is first calculated as the water Availability Minus the Demand (AMD) of humans and aquatic ecosystems and is relative to the area (m3 m-2 month-1). In a second step, the value is normalized with the world average result (AMD = 0.0136m3m-2 month-1) and inverted, and hence represents the relative value in comparison with the average m3 consumed in the world (the world average is calculated as a consumption-weighted average). Once inverted, 1/AMD  can be interpreted as a surface-time equivalent to generate unused water in this region. The indicator is limited to a range from 0.1 to 100, with a value of 1 corresponding to the world average, and a value of 10, for example, representing a region where there is 10 times less available water remaining per area than the world average."""
     url = "http://www.wulca-waterlca.org/aware.html"
+    id_column = 'id'
 
     def _water_flows(self, kind='all'):
         mapping = {
@@ -55,7 +57,6 @@ class AWARE(LCIA):
         for key in self._water_flows():
             yield((key, self.global_cf, "GLO"))
 
-    @regionalized
     def regional_cfs(self):
         water_flows = list(self._water_flows())
 
@@ -66,6 +67,8 @@ class AWARE(LCIA):
             with fiona.open(self.vector_ds) as src:
                 for feat in src:
                     for key in water_flows:
+                        if not isinstance(feat['properties'][self.column], Number):
+                            continue
                         yield (
                             key,
                             feat['properties'][self.column],
@@ -74,8 +77,12 @@ class AWARE(LCIA):
 
 
 class AnnualAgricultural(AWARE):
-    column = 'HH'
-    name = ("AWARE", "1.2 (April 2017)", "Water Use", "Human Health", "Marginal")
-    global_cf =
-    id_column =
+    column = "annual_agriculture"
+    name = ("AWARE", "1.2 (April 2017)", "Annual", "Agricultural")
+    global_cf = 45.74
 
+
+class AnnualNonagricultural(AWARE):
+    column = "annual_non_agriculture"
+    name = ("AWARE", "1.2 (April 2017)", "Annual", "Non-agricultural")
+    global_cf = 20.30
