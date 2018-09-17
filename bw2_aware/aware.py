@@ -3,22 +3,24 @@ import os
 from numbers import Number
 
 
-SURFACE_WATER = [
-    ('Fresh water (obsolete)', ('water', 'surface water')),
-    ('Water', ('water',)),
-    ('Water', ('water', 'surface water')),
-    ('Water, cooling, unspecified natural origin', ('natural resource', 'in water')),
+WATER_RESOURCE = [
     ('Water, lake', ('natural resource', 'in water')),
     ('Water, river', ('natural resource', 'in water')),
     ('Water, turbine use, unspecified natural origin', ('natural resource', 'in water')),
     ('Water, unspecified natural origin', ('natural resource', 'in water')),
-]
-
-GROUND_WATER = [
-    ('Water', ('water', 'ground-')),
-    ('Water', ('water', 'ground-, long-term')),
+    ('Water, cooling, unspecified natural origin', ('natural resource', 'in water')),
     ('Water, unspecified natural origin', ('natural resource', 'in ground')),
     ('Water, well, in ground', ('natural resource', 'in water')),
+]
+
+#     Ignored on the advice of Stephan Pfister (ETHZ)
+#     ('Water', ('water', 'ground-, long-term')),
+
+WATER_RELEASE = [
+    ('Fresh water (obsolete)', ('water', 'surface water')),
+    ('Water', ('water',)),
+    ('Water', ('water', 'surface water')),
+    ('Water', ('water', 'ground-')),
 ]
 
 
@@ -32,17 +34,10 @@ class AWARE(LCIA):
     url = "http://www.wulca-waterlca.org/aware.html"
     id_column = 'id'
 
-    def _water_flows(self, kind='all'):
-        mapping = {
-            'all': SURFACE_WATER + GROUND_WATER,
-            'surface': SURFACE_WATER,
-            'ground': GROUND_WATER
-        }
-        flows = mapping[kind]
-
+    def _water_flows(self, water):
         for act in self.db:
             name, categories = act['name'], tuple(act['categories'])
-            for x, y in flows:
+            for x, y in water:
                 if name == x and categories == y:
                     yield act.key
 
@@ -54,11 +49,14 @@ class AWARE(LCIA):
             }
 
     def global_cfs(self):
-        for key in self._water_flows():
+        for key in self._water_flows(WATER_RESOURCE):
             yield((key, self.global_cf, "GLO"))
+        for key in self._water_flows(WATER_RELEASE):
+            yield((key, self.global_cf * -1, "GLO"))
 
     def regional_cfs(self):
-        water_flows = list(self._water_flows())
+        positive_water_flows = list(self._water_flows(WATER_RESOURCE))
+        negative_water_flows = list(self._water_flows(WATER_RELEASE))
 
         for obj in self.global_cfs():
             yield obj
@@ -66,12 +64,21 @@ class AWARE(LCIA):
         with fiona.drivers():
             with fiona.open(self.vector_ds) as src:
                 for feat in src:
-                    for key in water_flows:
+                    for key in positive_water_flows:
                         if not isinstance(feat['properties'][self.column], Number):
                             continue
                         yield (
                             key,
                             feat['properties'][self.column],
+                            (self.geocollection, feat['properties'][self.id_column])
+                        )
+
+                    for key in negative_water_flows:
+                        if not isinstance(feat['properties'][self.column], Number):
+                            continue
+                        yield (
+                            key,
+                            feat['properties'][self.column] * -1,
                             (self.geocollection, feat['properties'][self.id_column])
                         )
 
