@@ -16,7 +16,7 @@ for dirpath, dirnames, filenames in os.walk('bw2_aware'):
 
 setup(
     name='bw2_aware',
-    version="0.2",
+    version="0.2.1",
     packages=packages,
     author="Chris Mutel",
     author_email="cmutel@gmail.com",
