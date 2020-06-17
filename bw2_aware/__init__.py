@@ -1,6 +1,6 @@
 __all__ = ("import_aware", "AnnualAgricultural", "AnnualNonagricultural")
 
-__version__ = (0, 2)
+__version__ = (0, 2, 1)
 
 from .aware import AnnualAgricultural, AnnualNonagricultural
 from bw2regional.pandarus_remote import remote, AlreadyExists
