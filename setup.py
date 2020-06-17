@@ -28,7 +28,8 @@ setup(
     ],
     package_data={'bw2_aware': ["data/*.*"]},
     url="https://github.com/cmutel/bw2_aware",
-    long_description=open('README.rst', encoding='utf-8').read(),
+    long_description_content_type="text/markdown",
+    long_description=open("README.md").read(),
     description=('AWARE regionalized LCIA method for Brightway2'),
     classifiers=[
         'Development Status :: 5 - Production/Stable',
