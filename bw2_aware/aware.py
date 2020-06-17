@@ -61,7 +61,7 @@ class AWARE(LCIA):
         for obj in self.global_cfs():
             yield obj
 
-        with fiona.drivers():
+        with fiona.Env():
             with fiona.open(self.vector_ds) as src:
                 for feat in src:
                     for key in positive_water_flows:
