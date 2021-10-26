@@ -1,6 +1,7 @@
-from .base import LCIA, data_dir, fiona, geocollections
+from .base import LCIA, data_dir, geocollections
 from numbers import Number
 import os
+import fiona
 
 
 WATER_RESOURCE = [
