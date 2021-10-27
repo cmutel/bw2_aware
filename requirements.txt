@@ -1,3 +1,0 @@
-brightway2
-bw2regional
-wrapt
