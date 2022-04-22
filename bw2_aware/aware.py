@@ -40,10 +40,8 @@ class AWARE(LCIA):
 
     def _water_flows(self, water):
         for act in self.db:
-            name, categories = act["name"], tuple(act["categories"])
-            for x, y in water:
-                if name == x and categories == y:
-                    yield act.key
+            if (act["name"], tuple(act["categories"])) in water:
+                yield act.key
 
     def setup_geocollections(self):
         if self.geocollection not in geocollections:
