@@ -1,4 +1,8 @@
-__all__ = ("import_aware", "AnnualAgricultural", "AnnualNonagricultural")
+__all__ = (
+    "import_global_lcimpact",
+    "import_regionalized_lcimpact",
+    "create_regionalized_intersections",
+)
 
 __version__ = (0, 2, 1)
 
@@ -9,13 +13,17 @@ from bw2regional.pandarus_remote import remote, AlreadyExists
 METHODS = (AnnualAgricultural, AnnualNonagricultural)
 
 
-def import_aware(biosphere="biosphere3"):
-    for method in METHODS:
-        try:
-            method(biosphere).import_regional_method()
-        except NotImplemented:
-            pass
 
+def import_global_aware(biosphere="biosphere3"):
+    raise NotImplementedError("This package only provide regionalized CFs")
+
+
+def import_regionalized_aware(biosphere="biosphere3"):
+    for method in METHODS:
+        method(biosphere).import_regional_method()
+
+
+def create_regionalized_intersections():
     try:
         job = remote.calculate_intersection("world", "watersheds-aware")
         job.poll(interval=2)
