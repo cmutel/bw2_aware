@@ -4,7 +4,8 @@ __all__ = (
     "create_regionalized_intersections",
 )
 
-__version__ = (0, 2, 1)
+
+__version__ = (0, 3)
 
 from .aware import AnnualAgricultural, AnnualNonagricultural
 from bw2regional.pandarus_remote import remote, AlreadyExists

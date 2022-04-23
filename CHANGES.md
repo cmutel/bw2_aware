@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3 (2022-04-23)
+
+* Update import functions to follow bw2_lcimpact pattern
+
 ## 0.2.1 (2020-06-17)
 
 Bugfix release.
