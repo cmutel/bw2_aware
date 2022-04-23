@@ -1,4 +1,4 @@
-from brightway2 import Database, Method
+from bw2data import Database, Method
 from bw2regional import geocollections
 import os
 import wrapt

@@ -1,6 +1,6 @@
 __all__ = (
-    "import_global_lcimpact",
-    "import_regionalized_lcimpact",
+    "import_global_aware",
+    "import_regionalized_aware",
     "create_regionalized_intersections",
 )
 
